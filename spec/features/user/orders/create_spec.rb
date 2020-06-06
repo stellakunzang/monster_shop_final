@@ -23,13 +23,13 @@ RSpec.describe 'Create Order' do
 
       visit '/cart'
 
-      click_button 'Check Out'
+      click_button "Check Out"
 
       order = Order.last
 
       expect(current_path).to eq('/profile/orders')
       expect(page).to have_content('Order created successfully!')
-      expect(page).to have_link('Cart: 0')
+      expect(page).to have_link("Cart: 0")
 
       within "#order-#{order.id}" do
         expect(page).to have_link(order.id)

@@ -28,13 +28,13 @@ RSpec.describe 'Merchant Dashboard' do
     end
 
     it 'I do not have a link to edit the merchant information' do
-      visit '/merchant'
+      visit "/merchant"
 
-      expect(page).to_not have_link('Edit')
+      expect(page).to_not have_link("Edit")
     end
 
     it 'I see a list of pending orders containing my items' do
-      visit '/merchant'
+      visit "/merchant"
 
       within '.orders' do
         expect(page).to_not have_css("#order-#{@order_1.id}")
@@ -47,7 +47,7 @@ RSpec.describe 'Merchant Dashboard' do
         end
 
         within "#order-#{@order_3.id}" do
-          expect(page).to have_link(@order_3.id)
+          expect(page).to have_link("#{@order_3.id}")
           expect(page).to have_content("Potential Revenue: #{@order_3.merchant_subtotal(@merchant_1.id)}")
           expect(page).to have_content("Quantity of Items: #{@order_3.merchant_quantity(@merchant_1.id)}")
           expect(page).to have_content("Created: #{@order_3.created_at}")
@@ -58,7 +58,7 @@ RSpec.describe 'Merchant Dashboard' do
     it 'I can link to an order show page' do
       visit '/merchant'
 
-      click_link @order_2.id
+      click_link "#{@order_2.id}"
 
       expect(current_path).to eq("/merchant/orders/#{@order_2.id}")
     end
