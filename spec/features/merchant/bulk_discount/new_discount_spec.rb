@@ -25,13 +25,75 @@ RSpec.describe 'New bulk discount' do
       visit "/merchant/discounts/new"
 
       fill_in :percent_discount, with: 10
-      # select with check-box: 'Applicable Items', with: 'All'
       fill_in :minimum_quantity, with: 5
+      fill_in :minimum_value, with: 40
+
+      find("input[id='applicable_items_id_#{@ogre.id}']").click
+
+      click_button 'Create Discount'
+
+      expect(current_path).to eq("/merchant/discounts")
+
+      expect(page).to have_content("Discount: 10%")
+      expect(page).to have_content("Minimum Quantity: 5")
+      expect(page).to have_content("Minimum Value: $40.00")
+      expect(page).to have_content("Applicable Items: #{@ogre.name}")
+    end
+
+    xit "I can create a discount for a merchant including multiple items" do
+      visit "/merchant/discounts/new"
+
+      find("input[id='applicable_items_id_#{@ogre.id}']").click
+      find("input[id='applicable_items_id_#{@nessie.id}']").click
+
+      fill_in :percent_discount, with: 10
+      fill_in :minimum_quantity, with: 5
+      fill_in :minimum_value, with: 40
       click_button 'Create Discount'
     end
 
-    it "I cannot create a discount without specifying both percent and either quantity or value" do
+    xit "I can create a discount for a merchant and leave items blank, which defaults to all items" do
+      visit "/merchant/discounts/new"
+
+      fill_in :percent_discount, with: 10
+      fill_in :minimum_quantity, with: 5
+      fill_in :minimum_value, with: 40
+      click_button 'Create Discount'
     end
 
+    xit "I can create a discount by specifying percent and either quantity or value" do
+      visit "/merchant/discounts/new"
+
+      find("input[id='applicable_items_id_#{@ogre.id}']").click
+
+      fill_in :percent_discount, with: 10
+      fill_in :minimum_quantity, with: 5
+      click_button 'Create Discount'
+
+      visit "/merchant/discounts/new"
+
+      find("input[id='applicable_items_id_#{@ogre.id}']").click
+
+      fill_in :percent_discount, with: 10
+      fill_in :minimum_value, with: 40
+      click_button 'Create Discount'
+    end
+
+    xit "I cannot create a discount without specifying both percent and either quantity or value" do
+      visit "/merchant/discounts/new"
+
+      fill_in :percent_discount, with: 10
+      click_button 'Create Discount'
+
+      visit "/merchant/discounts/new"
+
+      fill_in :minimum_value, with: 40
+      click_button 'Create Discount'
+
+      visit "/merchant/discounts/new"
+
+      fill_in :minimum_quantity, with: 5
+      click_button 'Create Discount'
+    end
   end
 end
