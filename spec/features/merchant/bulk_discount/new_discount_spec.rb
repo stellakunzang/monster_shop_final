@@ -40,7 +40,7 @@ RSpec.describe 'New bulk discount' do
       expect(page).to have_content("Applicable Items: #{@ogre.name}")
     end
 
-    xit "I can create a discount for a merchant including multiple items" do
+    it "I can create a discount for a merchant including multiple items" do
       visit "/merchant/discounts/new"
 
       find("input[id='applicable_items_id_#{@ogre.id}']").click
@@ -50,50 +50,67 @@ RSpec.describe 'New bulk discount' do
       fill_in :minimum_quantity, with: 5
       fill_in :minimum_value, with: 40
       click_button 'Create Discount'
+
+      expect(current_path).to eq("/merchant/discounts")
+
+      expect(page).to have_content("Discount: 10%")
+      expect(page).to have_content("Minimum Quantity: 5")
+      expect(page).to have_content("Minimum Value: $40.00")
+      expect(page).to have_content("Applicable Items: #{@ogre.name} and #{@nessie.name}")
     end
 
-    xit "I can create a discount for a merchant and leave items blank, which defaults to all items" do
+    it "I can create a discount for a merchant and leave items blank, which defaults to all items" do
       visit "/merchant/discounts/new"
 
       fill_in :percent_discount, with: 10
       fill_in :minimum_quantity, with: 5
       fill_in :minimum_value, with: 40
       click_button 'Create Discount'
+
+      expect(page).to have_content("Discount: 10%")
+      expect(page).to have_content("Minimum Quantity: 5")
+      expect(page).to have_content("Minimum Value: $40.00")
+      expect(page).to have_content("Applicable Items: #{@ogre.name}, #{@nessie.name}, and #{@giant.name}")
     end
 
-    xit "I can create a discount by specifying percent and either quantity or value" do
+    it "I can create a discount by specifying percent and quantity, without value" do
       visit "/merchant/discounts/new"
-
-      find("input[id='applicable_items_id_#{@ogre.id}']").click
 
       fill_in :percent_discount, with: 10
       fill_in :minimum_quantity, with: 5
       click_button 'Create Discount'
 
-      visit "/merchant/discounts/new"
-
-      find("input[id='applicable_items_id_#{@ogre.id}']").click
-
-      fill_in :percent_discount, with: 10
-      fill_in :minimum_value, with: 40
-      click_button 'Create Discount'
+      expect(page).to have_content("Discount: 10%")
+      expect(page).to have_content("Minimum Quantity: 5")
+      expect(page).to_not have_content("Minimum Value")
     end
 
-    xit "I cannot create a discount without specifying both percent and either quantity or value" do
+    it "I can create a discount by specifying percent and value, without quantity" do
+      visit "/merchant/discounts/new"
+
+      fill_in :percent_discount, with: 10
+      fill_in :minimum_value, with: 40
+      click_button 'Create Discount'
+
+      expect(page).to have_content("Discount: 10%")
+      expect(page).to have_content("Minimum Value: $40.00")
+      expect(page).to_not have_content("Minimum Quantity")
+    end
+
+    it "I cannot create a discount without specifying percent and either quantity or value" do
       visit "/merchant/discounts/new"
 
       fill_in :percent_discount, with: 10
       click_button 'Create Discount'
 
-      visit "/merchant/discounts/new"
+      expect(page).to have_content("Percent discount is required as well as either minimum quantity or minimum value!")
 
+      fill_in :percent_discount, with: 10
       fill_in :minimum_value, with: 40
       click_button 'Create Discount'
 
-      visit "/merchant/discounts/new"
-
-      fill_in :minimum_quantity, with: 5
-      click_button 'Create Discount'
+      expect(page).to have_content("Discount: 10%")
+      expect(page).to have_content("Minimum Value: $40.00")
     end
   end
 end
