@@ -1,0 +1,11 @@
+<%= "All Discounts" %>
+<% @discounts.each do |discount| %>
+  <%= "Discount: #{discount.percent_discount.round}%"%>
+  <% if discount.minimum_quantity %>
+    <%= "Minimum Quantity: #{discount.minimum_quantity}"%>
+  <% end %>
+  <% if discount.minimum_value %>
+    <%= "Minimum Value: #{number_to_currency(discount.minimum_value)}"%>
+  <% end %>
+  <%= "Applicable Items: #{discount.items_list}"%>
+<% end %>
