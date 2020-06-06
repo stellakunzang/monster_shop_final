@@ -1,4 +1,9 @@
 class Merchant::DiscountsController < Merchant::BaseController
+
+  def index
+    @discounts = Discount.all
+  end
+
   def new
     merchant = Merchant.find_by(id: current_user[:merchant_id])
     @items = merchant.items
@@ -8,19 +13,20 @@ class Merchant::DiscountsController < Merchant::BaseController
     params[:merchant_id] = current_user.merchant_id
     discount = Discount.create(discount_params)
     if discount.save
-      items = params[:applicable_items].reject! {|item| item.empty?}
-      if items.empty?
-        Merchant.find(:merchant_id).items.each do |item|
+      item_ids = params[:applicable_items].values.flatten.reject! {|id| id.empty? }
+      if item_ids.empty?
+        Merchant.find(current_user[:merchant_id]).items.each do |item|
           discount.discount_items.create ({ discount_id: discount.id, item_id: item.id })
-        end 
+        end
       else
-        items.each do |item_id|
+        item_ids.each do |item_id|
           discount.discount_items.create ({ discount_id: discount.id, item_id: item_id })
         end
       end
+      redirect_to "/merchant/discounts"
     else
       flash[:notice] = "Percent discount is required as well as either minimum quantity or minimum value!"
-      render :new
+      redirect_to "/merchant/discounts/new"
     end
   end
 
