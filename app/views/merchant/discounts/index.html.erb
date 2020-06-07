@@ -9,5 +9,6 @@
       <%= "Minimum Value: #{number_to_currency(discount.minimum_value)}"%>
     <% end %>
     <%= "Applicable Items: #{discount.items_list}"%>
+    <%= link_to "Edit Discount", "/merchant/discounts/#{discount.id}/edit" %>
 </section>
 <% end %>
