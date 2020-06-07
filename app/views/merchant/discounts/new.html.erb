@@ -1,0 +1,16 @@
+<h2>New Discount</h2>
+<%= form_tag "/merchant/discounts" do %>
+  <%= label_tag :percent_discount %>
+  <%= text_field_tag :percent_discount %>
+  <%= label_tag :minimum_quantity %>
+  <%= text_field_tag :minimum_quantity %>
+  <%= label_tag :minimum_value %>
+  <%= text_field_tag :minimum_value %>
+  <%= label_tag :applicable_items %>
+
+  <%= collection_check_boxes(:applicable_items, :id, @items, :id, :name) do |item| %>
+    <%= item.check_box %><%= item.label {item.text} %>
+  <% end %>
+
+  <%= submit_tag 'Create Discount' %>
+<% end %>

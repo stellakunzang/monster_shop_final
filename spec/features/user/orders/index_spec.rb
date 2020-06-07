@@ -21,7 +21,7 @@ RSpec.describe 'User Order Show Page' do
     it 'I can link to my orders from my profile' do
       visit profile_path
 
-      click_link 'My Orders'
+      click_link "My Orders"
 
       expect(current_path).to eq('/profile/orders')
     end
