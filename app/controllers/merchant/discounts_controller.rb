@@ -41,10 +41,13 @@ class Merchant::DiscountsController < Merchant::BaseController
     else
       flash[:notice] = "Percent discount is required as well as either minimum quantity or minimum value!"
       redirect_to "/merchant/discounts/#{@discount.id}/edit"
-    end 
+    end
   end
 
   def destroy
+    discount = Discount.find(params[:id])
+    discount.destroy
+    redirect_to '/merchant/discounts'
   end
 
   private
