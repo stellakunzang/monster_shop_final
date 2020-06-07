@@ -1,5 +1,5 @@
 class Discount < ApplicationRecord
-  has_many :discount_items
+  has_many :discount_items, dependent: :destroy
   has_many :items, through: :discount_items
   belongs_to :merchant
 
@@ -8,6 +8,6 @@ class Discount < ApplicationRecord
   validates_presence_of :minimum_quantity, presence: true, unless: :minimum_value
 
   def items_list
-    items.pluck(:name).to_sentence 
+    items.pluck(:name).to_sentence
   end
 end
