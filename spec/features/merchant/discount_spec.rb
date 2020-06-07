@@ -167,6 +167,22 @@ RSpec.describe 'Bulk discount' do
     end
 
     it "I can delete a discount" do
+      discount_1 = @merchant_1.discounts.create!(percent_discount: 10.0, minimum_value: 5.0, minimum_quantity: 5)
+      discount_1.discount_items.create!(item_id: @giant.id)
+      discount_1.discount_items.create!(item_id: @ogre.id)
+
+      visit "/merchant/discounts"
+
+      within "#discount-#{discount_1.id}" do
+        click_link "Delete Discount"
+      end
+
+      expect(current_path).to eq("/merchant/discounts")
+
+      expect(page).to_not have_content("Discount: 10%")
+      expect(page).to_not have_content("Minimum Value: $5.00")
+      expect(page).to_not have_content("Minimum Quantity: 5")
+      expect(page).to_not have_content("Applicable Items: #{@ogre.name} and #{@giant.name}")
     end
 
   end
