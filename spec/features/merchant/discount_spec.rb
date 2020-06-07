@@ -112,5 +112,31 @@ RSpec.describe 'New bulk discount' do
       expect(page).to have_content("Discount: 10%")
       expect(page).to have_content("Minimum Value: $40.00")
     end
+
+    it "I can have multiple discounts active at once" do
+       discount_1 = @merchant_1.discounts.create!(percent_discount: 10.0, minimum_value: 5.0, minimum_quantity: 5)
+       discount_2 = @merchant_1.discounts.create!(percent_discount: 50.0, minimum_value: 100.0)
+       discount_1.discount_items.create!(item_id: @giant.id)
+       discount_1.discount_items.create!(item_id: @ogre.id)
+       discount_2.discount_items.create!(item_id: @giant.id)
+       discount_2.discount_items.create!(item_id: @ogre.id)
+       discount_2.discount_items.create!(item_id: @nessie.id)
+
+      visit "/merchant/discounts"
+
+      within "#discount-#{discount_1.id}" do
+        expect(page).to have_content("Discount: 10%")
+        expect(page).to have_content("Minimum Value: $5.00")
+        expect(page).to have_content("Minimum Quantity: 5")
+        expect(page).to have_content("Applicable Items: #{@ogre.name} and #{@giant.name}")
+      end
+
+      within "#discount-#{discount_2.id}" do
+        expect(page).to have_content("Discount: 50%")
+        expect(page).to have_content("Minimum Value: $100.00")
+        expect(page).to have_content("Applicable Items: #{@ogre.name}, #{@nessie.name}, and #{@giant.name}")
+      end
+
+    end
   end
 end
