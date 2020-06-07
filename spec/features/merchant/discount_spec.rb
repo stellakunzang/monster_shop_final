@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'New bulk discount' do
+RSpec.describe 'Bulk discount' do
   describe 'As a Merchant employee' do
     before :each do
       @merchant_1 = Merchant.create!(name: 'Megans Marmalades', address: '123 Main St', city: 'Denver', state: 'CO', zip: 80218)
@@ -136,7 +136,38 @@ RSpec.describe 'New bulk discount' do
         expect(page).to have_content("Minimum Value: $100.00")
         expect(page).to have_content("Applicable Items: #{@ogre.name}, #{@nessie.name}, and #{@giant.name}")
       end
+    end
+
+    it "I can edit a discount" do
+      discount_1 = @merchant_1.discounts.create!(percent_discount: 10.0, minimum_value: 5.0, minimum_quantity: 5)
+      discount_1.discount_items.create!(item_id: @giant.id)
+      discount_1.discount_items.create!(item_id: @ogre.id)
+
+      visit "/merchant/discounts"
+
+      within "#discount-#{discount_1.id}" do
+        click_link "Edit Discount"
+      end
+
+      expect(current_path).to eq("/merchant/discounts/#{discount_1.id}/edit")
+
+      fill_in :percent_discount, with: 50
+      fill_in :minimum_value, with: 40
+      click_button 'Update Discount'
+
+      expect(current_path).to eq("/merchant/discounts")
+
+      within "#discount-#{discount_1.id}" do
+        expect(page).to have_content("Discount: 50%")
+        expect(page).to have_content("Minimum Value: $40.00")
+        expect(page).to have_content("Minimum Quantity: 5")
+        expect(page).to have_content("Applicable Items: #{@ogre.name} and #{@giant.name}")
+      end
 
     end
+
+    it "I can delete a discount" do
+    end
+
   end
 end
