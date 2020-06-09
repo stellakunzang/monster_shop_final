@@ -80,9 +80,9 @@ class Cart
       discount = Discount.find_by(id: discount_id)
       if discount.minimum_value == nil && totals[:quantity] >= discount.minimum_quantity
         discounts << discount
-      elsif discount.minimum_quantity == nil && totals[:value] >= discount.minimum_value
+      elsif discount.minimum_quantity == nil && discount.minimum_value != nil && totals[:value] >= discount.minimum_value
         discounts << discount
-      elsif totals[:value] >= discount.minimum_value && totals[:quantity] >= discount.minimum_quantity
+      elsif discount.minimum_quantity != nil && discount.minimum_value != nil && totals[:value] >= discount.minimum_value && totals[:quantity] >= discount.minimum_quantity
         discounts << discount
       end
     end
