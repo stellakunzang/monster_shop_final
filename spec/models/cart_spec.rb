@@ -108,7 +108,9 @@ RSpec.describe Cart do
     it '.best_discount' do
       @cart.add_item(@hippo.id.to_s)
       @cart.add_item(@hippo.id.to_s)
-      discount = @megan.discounts.create!(percent_discount: 25.0, minimum_value: 100.0)
+      @cart.add_item(@ogre.id.to_s)
+      @cart.add_item(@giant.id.to_s)
+      discount = @megan.discounts.create!(percent_discount: 25.0, minimum_value: 50.0)
       discount2 = @brian.discounts.create!(percent_discount: 50.0, minimum_value: 50.0)
       discount2.discount_items.create!(item_id: @hippo.id)
       discount.discount_items.create!(item_id: @giant.id)
@@ -151,7 +153,7 @@ RSpec.describe Cart do
       expect(@cart.price_with_discount(@ogre.price)).to eq(15)
     end
 
-    it 'subtotal_with_discount' do
+    it '.subtotal_with_discount' do
       discount = @megan.discounts.create!(percent_discount: 25.0, minimum_quantity: 3)
       @cart.add_item(@ogre.id.to_s)
       discount.discount_items.create!(item_id: @giant.id)
@@ -160,5 +162,16 @@ RSpec.describe Cart do
       expect(@cart.subtotal_with_discount(@ogre.id)).to eq(30)
     end
 
+    it '.grand_total_with_discount' do
+      discount = @megan.discounts.create!(percent_discount: 25.0, minimum_quantity: 3)
+      @cart.add_item(@hippo.id.to_s)
+      discount.discount_items.create!(item_id: @ogre.id)
+      discount.discount_items.create!(item_id: @giant.id)
+
+      discount_item_totals = (@ogre.price + (@giant.price * 2))
+      total_with_discount = @hippo.price + (discount_item_totals - (discount_item_totals * (discount.percent_discount * 0.01)))
+
+      expect(@cart.grand_total_with_discount).to eq(total_with_discount)
+    end
   end
 end
