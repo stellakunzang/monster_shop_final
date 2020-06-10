@@ -96,7 +96,7 @@ RSpec.describe Cart do
     end
 
     it '.discount_qualifications_met' do
-      discount = @megan.discounts.create!(percent_discount: 25.0, minimum_value: 100.0)
+      discount = @megan.discounts.create!(percent_discount: 25.0, minimum_value: 100.0, minimum_quantity: 2)
       discount.discount_items.create!(item_id: @ogre.id)
 
       expect(@cart.discount_qualifications_met([discount])).to eq([])
