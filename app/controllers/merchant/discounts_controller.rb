@@ -36,12 +36,8 @@ class Merchant::DiscountsController < Merchant::BaseController
 
   def update
     @discount = Discount.find(params[:id])
-    if @discount.update(discount_params)
-      redirect_to("/merchant/discounts")
-    else
-      flash[:notice] = "Percent discount is required as well as either minimum quantity or minimum value!"
-      redirect_to "/merchant/discounts/#{@discount.id}/edit"
-    end
+    @discount.update(discount_params)
+    redirect_to("/merchant/discounts")
   end
 
   def destroy
