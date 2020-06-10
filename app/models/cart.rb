@@ -126,7 +126,7 @@ class Cart
   end
 
   def discount_applied
-    !valid_discounts.empty?
+    valid_discounts.present?
   end
 
   def price_with_discount(item_price)
